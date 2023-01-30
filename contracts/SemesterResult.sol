@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SemesterResultStore is Ownable {
+    event SemesterResultOperation(string operation);
     enum SemesterType {
         FALL,
         SUMMER,
@@ -20,18 +21,21 @@ contract SemesterResultStore is Ownable {
     function addResult(uint8 type, uint year, string memory url) public onlyOwner {
         bytes32 key = abi.encodePacked(SemesterType(type), year);
         results[key] = Result(SemesterType(type), year, url);
+        emit SemesterResultOperation("Semester Result Added!");
     }
 
     function updateResult(uint8 type, uint year, string memory url) public onlyOwner {
         bytes32 key = abi.encodePacked(SemesterType(type), year);
         require(results[key].type == SemesterType(type) && results[key].year == year, "Result does not exist");
         results[key] = Result(SemesterType(type), year, url);
+        emit SemesterResultOperation("Semester Result Updated!");
     }
 
     function removeResult(uint8 type, uint year) public onlyOwner {
         bytes32 key = abi.encodePacked(SemesterType(type), year);
         require(results[key].type == SemesterType(type) && results[key].year == year, "Result does not exist");
         delete results[key];
+        emit SemesterResultOperation("Semester Result Removed!");
     }
 
     function getResult(uint8 type, uint year) public view returns (uint8, uint, string memory) {

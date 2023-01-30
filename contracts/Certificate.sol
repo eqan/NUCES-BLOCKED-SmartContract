@@ -3,6 +3,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 contract CertificateStore is Ownable {
+    event CertificateOperation(string operation);
     struct Certificate {
         uint id;
         string url;
@@ -12,11 +13,14 @@ contract CertificateStore is Ownable {
 
     function addCertificate(uint id, string memory url) public onlyOwner {
         certificates[id] = Certificate(id, url);
+        emit CertificateOperation("Certificate Added!");
     }
 
     function updateCertificate(uint id, string memory url) public onlyOwner {
         require(certificates[id].id == id, "Certificate does not exist");
         certificates[id] = Certificate(id, url);
+        emit CertificateOperation("Certificate Updated!");
+
     }
 
     function getCertificate(uint id) public view returns (uint, string memory) {
@@ -26,5 +30,6 @@ contract CertificateStore is Ownable {
     function removeCertificate(uint id) public onlyOwner {
         require(certificates[id].id == id, "Certificate does not exist");
         delete certificates[id];
+        emit CertificateOperation("Certificate Removed!");
     }
 }
