@@ -1,8 +1,3 @@
-
-pragma solidity ^0.8.0;
-
-import "@openzeppelin/contracts/access/Ownable.sol";
-
 contract SemesterResultStore is Ownable {
     enum SemesterType {
         FALL,
@@ -11,25 +6,33 @@ contract SemesterResultStore is Ownable {
     }
 
     struct Result {
-        uint id;
         SemesterType type;
         uint year;
         string url;
     }
 
-    mapping(uint => Result) results;
+    mapping(bytes32 => Result) results;
 
-    function addResult(uint id, uint8 type, uint year, string memory url) public onlyOwner {
-        results[id] = Result(id, SemesterType(type), year, url);
+    function addResult(uint8 type, uint year, string memory url) public onlyOwner {
+        bytes32 key = abi.encodePacked(SemesterType(type), year);
+        results[key] = Result(SemesterType(type), year, url);
     }
 
-    function updateResult(uint id, uint8 type, uint year, string memory url) public onlyOwner {
-        require(results[id].id == id, "Result does not exist");
-        results[id] = Result(id, SemesterType(type), year, url);
+    function updateResult(uint8 type, uint year, string memory url) public onlyOwner {
+        bytes32 key = abi.encodePacked(SemesterType(type), year);
+        require(results[key].type == SemesterType(type) && results[key].year == year, "Result does not exist");
+        results[key] = Result(SemesterType(type), year, url);
     }
 
-    function getResult(uint id) public view returns (uint, uint8, uint, string memory) {
-        Result storage result = results[id];
-        return (result.id, uint8(result.type), result.year, result.url);
+    function removeResult(uint8 type, uint year) public onlyOwner {
+        bytes32 key = abi.encodePacked(SemesterType(type), year);
+        require(results[key].type == SemesterType(type) && results[key].year == year, "Result does not exist");
+        delete results[key];
+    }
+
+    function getResult(uint8 type, uint year) public view returns (uint8, uint, string memory) {
+        bytes32 key = abi.encodePacked(SemesterType(type), year);
+        Result storage result = results[key];
+        return (uint8(result.type), result.year, result.url);
     }
 }

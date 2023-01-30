@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
-
 import "@openzeppelin/contracts/access/Ownable.sol";
+
 
 contract CertificateStore is Ownable {
     struct Certificate {
@@ -21,5 +21,10 @@ contract CertificateStore is Ownable {
 
     function getCertificate(uint id) public view returns (uint, string memory) {
         return (certificates[id].id, certificates[id].url);
+    }
+    
+    function removeCertificate(uint id) public onlyOwner {
+        require(certificates[id].id == id, "Certificate does not exist");
+        delete certificates[id];
     }
 }

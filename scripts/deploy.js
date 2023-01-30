@@ -1,5 +1,5 @@
 const main = async () => {
-  const transactionsFactory = await hre.ethers.getContractFactory("Task9");
+  const transactionsFactory = await hre.ethers.getContractFactory("CertficateStore");
   const transactionsContract = await transactionsFactory.deploy();
 
   await transactionsContract.deployed();
