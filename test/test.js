@@ -77,4 +77,14 @@ describe("Semester Result Store Contract", function () {
         expect(result.year).to.equal(2022);
         expect(result.url).to.equal("https://example.com/result1");
     });
+
+    it("Should not get a non-existent result", async function () {
+        let error;
+        try {
+            await semesterResultStore.getResult(2);
+        } catch (e) {
+            error = e;
+        }
+        expect(error.message).to.include("Result does not exist");
+    });
   });
