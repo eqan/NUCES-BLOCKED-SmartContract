@@ -16,26 +16,17 @@ describe("Certificate Store Contract", function () {
         expect(certificate.url).to.equal("https://example.com/certificate1");
     });
 
-    it("Should not add a certificate with the same ID", async function () {
-        let error;
-        try {
-            await certificateStore.addCertificate(1, "https://example.com/certificate2");
-        } catch (e) {
-            error = e;
-        }
-        expect(error.message).to.include("Certificate already exists");
-    });
-
-    it("Should get a certificate", async function () {
+    it("Should update a certificate", async function () {
+        await certificateStore.updateCertificate(1, "https://example.com/updatedCertificate1");
         const certificate = await certificateStore.getCertificate(1);
         expect(certificate.id).to.equal(1);
-        expect(certificate.url).to.equal("https://example.com/certificate1");
+        expect(certificate.url).to.equal("https://example.com/updatedCertificate1");
     });
 
-    it("Should not get a non-existent certificate", async function () {
+    it("Should throw an error when updating a non-existing certificate", async function () {
         let error;
         try {
-            await certificateStore.getCertificate(2);
+            await certificateStore.updateCertificate(2, "https://example.com/updatedCertificate2");
         } catch (e) {
             error = e;
         }
@@ -52,39 +43,30 @@ describe("Semester Result Store Contract", function () {
     });
 
     it("Should add a result", async function () {
-        await semesterResultStore.addResult(1, 0, 2022, "https://example.com/result1");
+        await semesterResultStore.addResult(1, 0, 2020, "https://example.com/result1");
         const result = await semesterResultStore.getResult(1);
         expect(result.id).to.equal(1);
         expect(result.type).to.equal(0);
-        expect(result.year).to.equal(2022);
+        expect(result.year).to.equal(2020);
         expect(result.url).to.equal("https://example.com/result1");
     });
 
-    it("Should not add a result with the same ID", async function () {
-        let error;
-        try {
-            await semesterResultStore.addResult(1, 1, 2022, "https://example.com/result2");
-        } catch (e) {
-            error = e;
-        }
-        expect(error.message).to.include("Result already exists");
-    });
-
-    it("Should get a result", async function () {
+    it("Should update a result", async function () {
+        await semesterResultStore.updateResult(1, 1, 2021, "https://example.com/updatedResult1");
         const result = await semesterResultStore.getResult(1);
         expect(result.id).to.equal(1);
-        expect(result.type).to.equal(0);
-        expect(result.year).to.equal(2022);
-        expect(result.url).to.equal("https://example.com/result1");
+        expect(result.type).to.equal(1);
+        expect(result.year).to.equal(2021);
+        expect(result.url).to.equal("https://example.com/updatedResult1");
     });
 
-    it("Should not get a non-existent result", async function () {
+    it("Should throw an error when updating a non-existing result", async function () {
         let error;
         try {
-            await semesterResultStore.getResult(2);
+            await semesterResultStore.updateResult(2, 2, 2022, "https://example.com/updatedResult2");
         } catch (e) {
             error = e;
         }
         expect(error.message).to.include("Result does not exist");
     });
-  });
+});

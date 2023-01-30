@@ -1,22 +1,25 @@
 pragma solidity ^0.8.0;
 
-contract CertificateStore {
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract CertificateStore is Ownable {
     struct Certificate {
         uint id;
-        bytes32 url;
+        string url;
     }
 
-    mapping (uint => Certificate) private certificates;
-    uint public certificateCount;
+    mapping(uint => Certificate) certificates;
 
-    function addCertificate(uint id, string memory url) public {
-        require(certificates[id].id == 0, "Certificate already exists");
-        certificates[id] = Certificate(id, bytes32(keccak256(abi.encodePacked(url))));
-        certificateCount++;
+    function addCertificate(uint id, string memory url) public onlyOwner {
+        certificates[id] = Certificate(id, url);
+    }
+
+    function updateCertificate(uint id, string memory url) public onlyOwner {
+        require(certificates[id].id == id, "Certificate does not exist");
+        certificates[id] = Certificate(id, url);
     }
 
     function getCertificate(uint id) public view returns (uint, string memory) {
-        require(certificates[id].id != 0, "Certificate does not exist");
-        return (certificates[id].id, string(abi.decodePacked(certificates[id].url)));
+        return (certificates[id].id, certificates[id].url);
     }
 }

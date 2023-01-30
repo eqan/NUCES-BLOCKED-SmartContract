@@ -1,26 +1,35 @@
+
 pragma solidity ^0.8.0;
 
-contract SemesterResultStore {
-    enum SemesterType { FALL, SUMMER, WINTER }
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract SemesterResultStore is Ownable {
+    enum SemesterType {
+        FALL,
+        SUMMER,
+        WINTER
+    }
 
     struct Result {
         uint id;
         SemesterType type;
         uint year;
-        bytes32 url;
+        string url;
     }
 
-    mapping (uint => Result) private results;
-    uint public resultCount;
+    mapping(uint => Result) results;
 
-    function addResult(uint id, SemesterType type, uint year, string memory url) public {
-        require(results[id].id == 0, "Result already exists");
-        results[id] = Result(id, type, year, bytes32(keccak256(abi.encodePacked(url))));
-        resultCount++;
+    function addResult(uint id, uint8 type, uint year, string memory url) public onlyOwner {
+        results[id] = Result(id, SemesterType(type), year, url);
     }
 
-    function getResult(uint id) public view returns (uint, SemesterType, uint, string memory) {
-        require(results[id].id != 0, "Result does not exist");
-        return (results[id].id, results[id].type, results[id].year, string(abi.decodePacked(results[id].url)));
+    function updateResult(uint id, uint8 type, uint year, string memory url) public onlyOwner {
+        require(results[id].id == id, "Result does not exist");
+        results[id] = Result(id, SemesterType(type), year, url);
+    }
+
+    function getResult(uint id) public view returns (uint, uint8, uint, string memory) {
+        Result storage result = results[id];
+        return (result.id, uint8(result.type), result.year, result.url);
     }
 }
