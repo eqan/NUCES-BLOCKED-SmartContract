@@ -13,7 +13,6 @@ contract CertificateStore is Ownable {
     mapping(uint => Certificate) certificates;
 
     function addCertificate(uint id, string memory url) public onlyOwner  returns (bool) {
-        require(validateURLLength(id), "Provide Appropriate URL");
         certificates[id] = Certificate(id, url);
         emit CertificateOperation("Certificate Added!");
         return (validateIfCertificateAddedOrUpdated(id));
@@ -21,7 +20,6 @@ contract CertificateStore is Ownable {
 
     function updateCertificate(uint id, string memory url) public onlyOwner returns (bool) {
         require(certificates[id].id == id, "Certificate does not exist");
-        require(validateURLLength(id), "Provide Appropriate URL");
         certificates[id] = Certificate(id, url);
         emit CertificateOperation("Certificate Updated!");
         return (validateIfCertificateAddedOrUpdated(id));
@@ -41,13 +39,6 @@ contract CertificateStore is Ownable {
 
     function validateIfCertificateAddedOrUpdated(uint id) private view returns(bool){
         if (bytes(certificates[id].url).length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    function validateURLLength(uint id) private view returns(bool){
-        if (bytes(certificates[id].url).length > 10) {
             return true;
         }
         return false;

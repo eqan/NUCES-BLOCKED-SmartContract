@@ -18,7 +18,6 @@ contract SemesterStore is Ownable {
     function addSemester(string memory semesterType, uint year, string memory url) public onlyOwner returns (bool)  {
         require(validateIDFormat(semesterType, year), "Format Invalid");
         string memory id = returnID(semesterType, year);
-        require(validateURLLength(id), "Provide Appropriate URL");
         require(!validateIDExists(semesterType, year, id), "Id exists!");
         semesters[id] = Semester(semesterType, year, url);
         emit SemesterOperation("Semester Added!");
@@ -28,7 +27,6 @@ contract SemesterStore is Ownable {
     function updateSemester(string memory semesterType, uint year, string memory url) public onlyOwner returns (bool)  {
         require(validateIDFormat(semesterType, year), "Format Invalid");
         string memory id = returnID(semesterType, year);
-        require(validateURLLength(id), "Provide Appropriate URL");
         require(validateIDExists(semesterType, year, id), "Id doesnt exist!");
         semesters[id] = Semester(semesterType, year, url);
         emit SemesterOperation("Semester Updated!");
@@ -74,13 +72,6 @@ contract SemesterStore is Ownable {
 
     function validateIfSemesterAddedOrUpdated(string memory id) private view returns(bool){
         if (bytes(semesters[id].semesterType).length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    function validateURLLength(string memory id) private view returns(bool){
-        if (bytes(semesters[id].url).length > 10) {
             return true;
         }
         return false;

@@ -1,7 +1,7 @@
 To compile transaction.json use:
 
 ```
-npx hardhat run .\scripts\deploy.js --network ropsten
+npx hardhat run .\scripts\deploy.js --network goreli
 ```
 
 Smart Contract Deployed Addresses:
