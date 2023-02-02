@@ -1,3 +1,4 @@
+
 pragma solidity >=0.7.0 <0.9.0;
 import "remix_tests.sol";
 import "hardhat/console.sol";
@@ -36,4 +37,20 @@ contract CertificateStoreTest {
         Assert.equal(id, 0, "Certificate id should be 0 after removal");
         Assert.equal(url, "", "Certificate url should be empty after removal");
     }
+    
+    function checkAddCertificateInvalid() public {
+    console.log("Running checkAddCertificateInvalid");
+    require(certificateStoreToTest.addCertificate(0, "www.example.com") == false, "Adding a certificate with an invalid id (0) should not have been successful");
+    }
+
+    function checkUpdateCertificateInvalid() public {
+        console.log("Running checkUpdateCertificateInvalid");
+        require(certificateStoreToTest.updateCertificate(0, "www.newexample.com") == false, "Updating a certificate with an invalid id (0) should not have been successful");
+    }
+
+    function checkRemoveCertificateInvalid() public {
+        console.log("Running checkRemoveCertificateInvalid");
+        require(certificateStoreToTest.removeCertificate(0) == false, "Removing a certificate with an invalid id (0) should not have been successful");
+    }
+
 }

@@ -1,3 +1,4 @@
+
 pragma solidity >=0.7.0 <0.9.0;
 import "remix_tests.sol";
 import "hardhat/console.sol";
@@ -34,9 +35,22 @@ contract SemesterStoreTest {
         Assert.equal(semesterStoreToTest.getSemester("FALL_2022"), "", "Semester should have been removed correctly");
     }
 
-    function checkAddSemesterInvalid() public {
-        console.log("Running checkAddSemesterInvalid");
-        semesterStoreToTest.addSemester("INVALID", 2022, "https://www.example.com/invalid");
-        Assert.equal(semesterStoreToTest.getSemester("INVALID_2022"), "", "Semester with invalid semester type should not have been added");
+    
+    function checkAddSemesterInvalidSemesterType() public {
+        console.log("Running checkAddSemesterInvalidSemesterType");
+        bool result = semesterStoreToTest.addSemester("INVALID", 2022, "https://www.example.com/invalid");
+        require(result == false, "Adding a semester with an invalid type should fail");
     }
+    
+    function checkUpdateSemesterInvalid() public {
+        console.log("Running checkUpdateSemesterInvalid");
+        bool result = semesterStoreToTest.updateSemester("INVALID", 2022, "https://www.example.com/invalid");
+        require(result == false, "Updating a semester with an invalid type should not have been successful");
+    }
+
+    function checkRemoveSemesterInvalid() public {
+        console.log("Running checkRemoveSemesterInvalid");
+        require(semesterStoreToTest.removeSemester("INVALID_2022") == false, "Removing a non-existing semester should not have been successful");
+    }
+
 }
