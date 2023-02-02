@@ -12,13 +12,13 @@ contract SemesterStore is Ownable {
         uint year;
         string url;
     }
-    string semesterTypes = "FALL SPRING SUMMER";
 
     mapping(string => Semester) semesters;
 
     function addSemester(string memory semesterType, uint year, string memory url) public onlyOwner {
         require(validateIDFormat(semesterType, year), "Format Invalid");
         string memory id = returnID(semesterType, year);
+        require(!validateIDExists(semesterType, year, id), "Id exists!");
         semesters[id] = Semester(semesterType, year, url);
         emit SemesterOperation("Semester Added!");
     }
