@@ -3,7 +3,7 @@ const { Contract, getDefaultProvider } = require('ethers');
 const hardhat = require('hardhat');
 
 async function main() {
-const provider = getDefaultProvider('rinkeby');
+const provider = getDefaultProvider('goreli');
 const contract = await Contract.fromArtifactName('Certificate', provider);
 
 const owner = await contract.owner();

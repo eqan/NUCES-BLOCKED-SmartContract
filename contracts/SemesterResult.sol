@@ -1,46 +1,69 @@
+// SPDX-License-Identifier: FAST NUCES
 pragma solidity ^0.8.0;
-
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract SemesterResultStore is Ownable {
-    event SemesterResultOperation(string operation);
-    enum SemesterType {
-        FALL,
-        SUMMER,
-        WINTER
-    }
 
-    struct Result {
-        SemesterType type;
+
+contract SemesterStore is Ownable {
+    event SemesterOperation(string operation);
+    struct Semester {
+        string semesterType;
         uint year;
         string url;
     }
+    string semesterTypes = "FALL SPRING SUMMER";
 
-    mapping(bytes32 => Result) results;
+    mapping(string => Semester) semesters;
 
-    function addResult(uint8 type, uint year, string memory url) public onlyOwner {
-        bytes32 key = abi.encodePacked(SemesterType(type), year);
-        results[key] = Result(SemesterType(type), year, url);
-        emit SemesterResultOperation("Semester Result Added!");
+    function addSemester(string memory semesterType, uint year, string memory url) public onlyOwner {
+        require(validateIDFormat(semesterType, year), "Format Invalid");
+        string memory id = returnID(semesterType, year);
+        semesters[id] = Semester(semesterType, year, url);
+        emit SemesterOperation("Semester Added!");
     }
 
-    function updateResult(uint8 type, uint year, string memory url) public onlyOwner {
-        bytes32 key = abi.encodePacked(SemesterType(type), year);
-        require(results[key].type == SemesterType(type) && results[key].year == year, "Result does not exist");
-        results[key] = Result(SemesterType(type), year, url);
-        emit SemesterResultOperation("Semester Result Updated!");
+    function updateSemester(string memory semesterType, uint year, string memory url) public onlyOwner {
+        require(validateIDFormat(semesterType, year), "Format Invalid");
+        string memory id = returnID(semesterType, year);
+        require(validateIDExists(semesterType, year, id), "Id doesnt exist!");
+        semesters[id] = Semester(semesterType, year, url);
+        emit SemesterOperation("Semester Updated!");
     }
 
-    function removeResult(uint8 type, uint year) public onlyOwner {
-        bytes32 key = abi.encodePacked(SemesterType(type), year);
-        require(results[key].type == SemesterType(type) && results[key].year == year, "Result does not exist");
-        delete results[key];
-        emit SemesterResultOperation("Semester Result Removed!");
+    function getSemester(string memory id) public view returns (string memory) {
+        return semesters[id].url;
+    }
+    
+    function removeSemester(string memory id) public onlyOwner {
+        delete semesters[id];
+        emit SemesterOperation("Semester Removed!");
     }
 
-    function getResult(uint8 type, uint year) public view returns (uint8, uint, string memory) {
-        bytes32 key = abi.encodePacked(SemesterType(type), year);
-        Result storage result = results[key];
-        return (uint8(result.type), result.year, result.url);
+
+    function returnID(string memory semesterType, uint yearInt) private pure returns (string memory) {
+        string memory yearString = Strings.toString(yearInt);
+        return string(abi.encodePacked(semesterType, "_", yearString));
+    }
+
+    function validateIDExists(string memory semesterType, uint yearInt, string memory id) private view returns (bool) {
+        if(compare(semesters[id].semesterType, semesterType) && semesters[id].year == yearInt)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    function validateIDFormat(string memory semesterType, uint yearInt) private pure returns (bool) {
+        if (yearInt >= 2014 && yearInt <= 2099) {
+            if (compare(semesterType, "FALL") || compare(semesterType, "SPRING") || compare(semesterType, "SUMMER")) {
+            return true;
+            }
+        }
+        return false;
+    }
+
+    function compare(string memory str1, string memory str2) private pure returns (bool) {
+        return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
     }
 }
