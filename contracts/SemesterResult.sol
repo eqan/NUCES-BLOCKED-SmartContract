@@ -39,6 +39,7 @@ contract SemesterStore is Ownable {
     
     function removeSemester(string memory id) public onlyOwner  returns (bool) {
         delete semesters[id];
+        semesterIndex-=1;
         emit SemesterOperation("Semester Removed!");
         return (!validateIfSemesterAddedOrUpdated(id));
     }
