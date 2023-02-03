@@ -6,6 +6,6 @@ npx hardhat run .\scripts\deploy.js --network goreli
 
 Smart Contract Deployed Addresses:
 
-Certificate Store: 0x919Ccd710E1b7f2C29F92CaF971b45BFA515A30e
+Certificate Store: 0x1f7E9047c437DD1c15dEb67D73561152B7288151
 
-Semester Store: 0x5C7990Bb563DB34DF0cF8ee79f235457DDca964f
+Semester Store: 0x6f2A2744F0878C519637E6e69fBb777EEAe5963B
