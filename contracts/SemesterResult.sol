@@ -38,6 +38,7 @@ contract SemesterStore is Ownable {
     }
     
     function removeSemester(string memory id) public onlyOwner  returns (bool) {
+        require(bytes(semesters[id].semesterType).length > 0, "Semester does not exist");
         delete semesters[id];
         semesterIndex-=1;
         emit SemesterOperation("Semester Removed!");
