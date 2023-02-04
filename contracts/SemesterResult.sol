@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+
 contract SemesterStore is Ownable {
     event SemesterOperation(string operation);
     struct Semester {
@@ -45,12 +46,13 @@ contract SemesterStore is Ownable {
         return (!validateIfSemesterAddedOrUpdated(id));
     }
 
-    function getAllSemesters() onlyOwner public view returns (Semester[] memory) {
-        Semester[] memory _semesters = new Semester[](semesterIndex);
+    function getAllSemestersWithPagination(uint from, uint to) onlyOwner public view returns (Semester[] memory) {
+        require(validatePagination(from, to), "Pagination coordinates exceeds limit!");
+        Semester[] memory _semesters = new Semester[](to - from + 1);
         uint index = 0;
-        for (uint i = 0; i <= semesterIndex; i++) {
+        for (uint i = from; i <= to; i++) {
             string memory id  = semesterIds[i];
-            if(!compare(id, ""))
+            if(!compare(id, "") && semesters[id].year > 0)
             {
                 _semesters[index].semesterType = semesters[id].semesterType;
                 _semesters[index].year = semesters[id].year;
@@ -91,6 +93,12 @@ contract SemesterStore is Ownable {
         if (bytes(semesters[id].semesterType).length > 0) {
             return true;
         }
+        return false;
+    }
+
+    function validatePagination(uint from, uint to) private view returns(bool){
+        if(from >=0  && to <= semesterIndex)
+            return true;
         return false;
     }
 }

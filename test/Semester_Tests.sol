@@ -16,23 +16,22 @@ contract SemesterStoreTest {
         semesterStoreToTest = new SemesterStore();
     }
 
-
-    function checkGetAllSemesters() public {
-        console.log("Running checkGetAllSemesters");
+    function checkGetAllSemestersWithPagination() public {
+        console.log("Running checkGetAllSemestersWithPagination");
         semesterStoreToTest.addSemester("FALL", 2022, "https://www.example.com/fall2022");
-        semesterStoreToTest.addSemester("SPRING", 2023, "https://www.example.com/spring2023");
-        (SemesterStore.Semester[] memory allSemesters) = semesterStoreToTest.getAllSemesters();
+        semesterStoreToTest.addSemester("SPRING", 2022, "https://www.example.com/spring2022");
+        (SemesterStore.Semester[] memory allSemesters) = semesterStoreToTest.getAllSemestersWithPagination(0, 1);
         Assert.equal(allSemesters.length, 2, "There should be 2 semesters returned");
         Assert.equal(allSemesters[0].semesterType, "FALL", "Semester type should be correct");
         Assert.equal(allSemesters[0].year, 2022, "Semester year should be correct");
         Assert.equal(allSemesters[0].url, "https://www.example.com/fall2022", "Semester URL should be correct");
         Assert.equal(allSemesters[1].semesterType, "SPRING", "Semester type should be correct");
-        Assert.equal(allSemesters[1].year, 2023, "Semester year should be correct");
-        Assert.equal(allSemesters[1].url, "https://www.example.com/spring2023", "Semester URL should be correct");
+        Assert.equal(allSemesters[1].year, 2022, "Semester year should be correct");
+        Assert.equal(allSemesters[1].url, "https://www.example.com/spring2022", "Semester URL should be correct");
         semesterStoreToTest.removeSemester("FALL_2022");
-        semesterStoreToTest.removeSemester("SPRING_2023");
+        semesterStoreToTest.removeSemester("SPRING_2022");
     }
-    
+
     function checkAddSemester() public {
         console.log("Running checkAddSemester");
         semesterStoreToTest.addSemester("FALL", 2022, "https://www.example.com/fall2022");
