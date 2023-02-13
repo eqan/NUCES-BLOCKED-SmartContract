@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: FAST NUCES
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -36,6 +36,10 @@ contract SemesterStore is Ownable {
 
     function getSemester(string memory id) public view returns (string memory) {
         return semesters[id].url;
+    }
+
+    function getSemesterCount() public view returns (uint256) {
+        return semesterIndex;
     }
     
     function removeSemester(string memory id) public onlyOwner  returns (bool) {

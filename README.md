@@ -2,10 +2,11 @@ To compile transaction.json use:
 
 ```
 npx hardhat run .\scripts\deploy.js --network goreli
+npx hardhat flatten
 ```
 
 Smart Contract Deployed Addresses:
 
-Certificate Store: 0xDeE792A4cB38aF2536D90f8E1d724238b681df23
+Certificate Store: 0x7C1B33551E246806301Ecf2633dfFB44EA792D75
 
-Semester Store: 0x0528Cfba3680c346D99e1EE44486159D04ea8F87
+Semester Store: 0x108535cE9b2e6536bC9F5bA0694d8DA256d87a69

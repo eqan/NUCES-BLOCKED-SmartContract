@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: FAST NUCES
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -31,6 +31,10 @@ contract CertificateStore is Ownable {
 
     function getCertificate(uint id) public view returns (uint, string memory, string memory, string memory) {
         return (certificates[id].id, certificates[id].name, certificates[id].email, certificates[id].url);
+    }
+    
+    function getCertificateCount() public view returns (uint256) {
+        return certificatesCount;
     }
     
     function removeCertificate(uint id) public onlyOwner returns (bool) {
