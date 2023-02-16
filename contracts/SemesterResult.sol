@@ -45,6 +45,8 @@ contract SemesterStore is Ownable {
     function removeSemester(string memory id) public onlyOwner  returns (bool) {
         require(bytes(semesters[id].semesterType).length > 0, "Semester does not exist");
         delete semesters[id];
+        uint256 indexToDelete = findSemesterIndex(id);
+        semesterIds[indexToDelete] = semesterIds[semesterIndex-1];
         semesterIndex-=1;
         emit SemesterOperation("Semester Removed!");
         return (!validateIfSemesterAddedOrUpdated(id));
@@ -104,5 +106,14 @@ contract SemesterStore is Ownable {
         if(from >=0  && to <= semesterIndex)
             return true;
         return false;
+    }
+        
+    function findSemesterIndex(string memory id) private view returns (uint256) {
+        for (uint256 i = 0; i < semesterIndex; i++) {
+            if (compare(semesterIds[i], id)) {
+                return i;
+            }
+        }
+        revert("Semester not found in semesterIds");
     }
 }

@@ -1,12 +1,26 @@
 pragma solidity >=0.7.0 <0.9.0;
 import "remix_tests.sol";
 import "hardhat/console.sol";
-import "../contracts/SemesterResult.sol";
+import "../contracts/SemesterStore.sol";
 
 contract SemesterStoreTest {
     SemesterStore semesterStoreToTest;
     address owner;
-    bytes32[] semesterTypes;
+    bytes32[emesterTypes;
+
+        function beforeAll () public {
+            owner = msg.sender;
+            semesterTypes.push(bytes32("FALL"));
+            semesterTypes.push(bytes32("SPRING"));
+            semesterTypes.push(bytes32("SUMMER"));
+            semesterStoreToTest = new SemesterStore();
+        }
+
+        function checkGetAllSemestersWithPagination() public {
+            console.log("Running checkGetAllSemestersWithPagination");
+            semesterStoreToTest.addSemester("FALL", 2022, "https://www.example.com/fall2022");
+            semesterStoreToTest.addSemester("SPRING", 2022, "https://www.example.com/spring2022");
+            (SemesterStore.Semestery semesterTypes;
 
     function beforeAll () public {
         owner = msg.sender;
