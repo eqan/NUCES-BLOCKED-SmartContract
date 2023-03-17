@@ -24,14 +24,14 @@ contract SemesterStore is Ownable {
         semesters[id] = Semester(semesterType, year, url);
         semesterIndex++;
         emit SemesterOperation("Semester Added!");
-        return (validateIfSemesterAddedOrUpdated(id));
+        return true;
     }
 
     function updateSemester(string memory id, string memory url) public onlyOwner returns (bool)  {
         require(bytes(semesters[id].semesterType).length > 0, "Semester does not exist");
         semesters[id].url = url;
         emit SemesterOperation("Semester Updated!");
-        return (validateIfSemesterAddedOrUpdated(id));
+        return true;
     }
 
     function getSemester(string memory id) public view returns (string memory) {
@@ -41,6 +41,13 @@ contract SemesterStore is Ownable {
     function getSemesterCount() public view returns (uint256) {
         return semesterIndex;
     }
+
+    function removeSemesters(string[] memory ids) public onlyOwner returns (bool) {
+        for (uint256 i = 0; i < ids.length; i++) {
+            removeSemester(ids[i]);
+        }
+        return true;
+    }
     
     function removeSemester(string memory id) public onlyOwner  returns (bool) {
         require(bytes(semesters[id].semesterType).length > 0, "Semester does not exist");
@@ -49,7 +56,7 @@ contract SemesterStore is Ownable {
         semesterIds[indexToDelete] = semesterIds[semesterIndex-1];
         semesterIndex-=1;
         emit SemesterOperation("Semester Removed!");
-        return (!validateIfSemesterAddedOrUpdated(id));
+        return true;
     }
 
     function getAllSemestersWithPagination(uint from, uint to) onlyOwner public view returns (Semester[] memory) {
@@ -93,13 +100,6 @@ contract SemesterStore is Ownable {
 
     function compare(string memory str1, string memory str2) private pure returns (bool) {
         return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
-    }
-
-    function validateIfSemesterAddedOrUpdated(string memory id) private view returns(bool){
-        if (bytes(semesters[id].semesterType).length > 0) {
-            return true;
-        }
-        return false;
     }
 
     function validatePagination(uint from, uint to) private view returns(bool){

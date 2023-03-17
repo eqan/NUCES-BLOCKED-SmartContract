@@ -6,21 +6,7 @@ import "../contracts/SemesterStore.sol";
 contract SemesterStoreTest {
     SemesterStore semesterStoreToTest;
     address owner;
-    bytes32[emesterTypes;
-
-        function beforeAll () public {
-            owner = msg.sender;
-            semesterTypes.push(bytes32("FALL"));
-            semesterTypes.push(bytes32("SPRING"));
-            semesterTypes.push(bytes32("SUMMER"));
-            semesterStoreToTest = new SemesterStore();
-        }
-
-        function checkGetAllSemestersWithPagination() public {
-            console.log("Running checkGetAllSemestersWithPagination");
-            semesterStoreToTest.addSemester("FALL", 2022, "https://www.example.com/fall2022");
-            semesterStoreToTest.addSemester("SPRING", 2022, "https://www.example.com/spring2022");
-            (SemesterStore.Semestery semesterTypes;
+    bytes32[] semesterTypes;
 
     function beforeAll () public {
         owner = msg.sender;
@@ -80,5 +66,23 @@ contract SemesterStoreTest {
     function checkRemoveSemesterInvalid() public {
         console.log("Running checkRemoveSemesterInvalid");
         require(semesterStoreToTest.removeSemester("INVALID_2022") == false, "Removing a non-existing semester should not have been successful");
+    }
+
+    function checkRemoveSemesters() public {
+        console.log("Running checkRemoveSemesters");
+        // Add semesters to remove
+        semesterStoreToTest.addSemester("FALL", 2022, "https://www.example.com/fall2022");
+        semesterStoreToTest.addSemester("SPRING", 2022, "https://www.example.com/spring2022");
+        // Remove semesters
+        string[] memory semesterIds = new string[](2);
+        semesterIds[0] = "FALL_2022";
+        semesterIds[1] = "SPRING_2022";
+        bool success = semesterStoreToTest.removeSemesters(semesterIds);
+        Assert.equal(success, true, "Semesters should have been removed successfully");
+        // Check that semesters were removed
+        for (uint i = 0; i < semesterIds.length; i++) {
+            string memory semesterId = semesterIds[i];
+            Assert.equal(semesterStoreToTest.getSemester(semesterId), "", "Semester should have been removed correctly");
+        }
     }
 }

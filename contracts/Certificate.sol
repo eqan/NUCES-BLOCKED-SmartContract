@@ -21,14 +21,14 @@ contract CertificateStore is Ownable {
         certificates[id] = Certificate(id, name, email, url);
         certificateIndex+=1;
         emit CertificateOperation("Certificate Added!");
-        return (validateIfCertificateAddedOrUpdated(id));
+        return true;
     }
 
     function updateCertificate(string memory id, string memory name, string memory email, string memory url) public onlyOwner returns (bool) {
         require(compare(certificates[id].id, id), "Certificate does not exist");
         certificates[id] = Certificate(id, name, email, url);
         emit CertificateOperation("Certificate Updated!");
-        return (validateIfCertificateAddedOrUpdated(id));
+        return true;
 
     }
 
@@ -38,6 +38,13 @@ contract CertificateStore is Ownable {
     
     function getCertificateCount() public view returns (uint256) {
         return certificateIndex;
+    }
+
+    function removeCertificates(string[] memory ids) public onlyOwner returns (bool) {
+        for (uint256 i = 0; i < ids.length; i++) {
+            removeCertificate(ids[i]);
+        }
+        return true;
     }
     
     function removeCertificate(string memory id) public onlyOwner returns (bool) {
@@ -65,13 +72,6 @@ contract CertificateStore is Ownable {
             }
         }
         return _certificates;
-    }
-
-    function validateIfCertificateAddedOrUpdated(string memory id) private view returns(bool){
-        if (bytes(certificates[id].url).length > 0) {
-            return true;
-        }
-        return false;
     }
 
     function validatePagination(uint from, uint to) private view returns(bool){

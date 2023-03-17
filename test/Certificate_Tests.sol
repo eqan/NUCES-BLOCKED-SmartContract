@@ -86,4 +86,23 @@ contract CertificateStoreTest {
         console.log("Running checkRemoveCertificateInvalidIdTest");
         require(certificateStoreToTest.removeCertificate("19F0256") == false, "Removing a certificate with an invalid id (0) should not have been successful");
     }
+
+    function checkRemoveCertificatess() public {
+        console.log("Running checkRemoveSemesters");
+        // Add semesters to remove
+        certificateStoreToTest.addCertificate("19F0260", "John Doe", "johndoe@email.com", "www.example.com");
+        certificateStoreToTest.addCertificate("19F0261", "Jane Doe", "janedoe@email.com", "www.example2.com");
+        // Remove semesters
+        string[] memory certificateIds = new string[](2);
+        certificateIds[0] = "19F0260";
+        certificateIds[1] = "19F0261";
+        bool success = certificateStoreToTest.removeCertificates(certificateIds);
+        Assert.equal(success, true, "Certificates should have been removed successfully");
+        // Check that semesters were removed
+        for (uint i = 0; i < certificateIds.length; i++) {
+            string memory certificateId = certificateIds[i];
+            (string memory id, string memory name, string memory email, string memory url) = certificateStoreToTest.getCertificate(certificateId);
+            Assert.equal(id, "", "Certificate should have been removed correctly");
+        }
+    }
 }
