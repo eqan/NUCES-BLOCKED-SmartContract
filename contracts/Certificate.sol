@@ -15,6 +15,13 @@ contract CertificateStore is Ownable {
     mapping(string => Certificate) certificates;
     mapping(uint => string) certificateIds;
 
+    function addCertificates(Certificate[] memory _certificates) public onlyOwner returns (bool) {
+        for (uint256 i = 0; i < _certificates.length; i++) {
+            addCertificate(_certificates[i].id, _certificates[i].name, _certificates[i].email, _certificates[i].url);
+        }
+        return true;
+    }
+
     function addCertificate(string memory id, string memory name, string memory email, string memory url) public onlyOwner  returns (bool) {
         require(compare(certificates[id].id, ""), "Id already exists");
         certificateIds[certificateIndex] = id;

@@ -85,4 +85,17 @@ contract SemesterStoreTest {
             Assert.equal(semesterStoreToTest.getSemester(semesterId), "", "Semester should have been removed correctly");
         }
     }
+    function checkAddSemesters() public {
+        console.log("Running checkAddSemesters");
+        // Add semesters
+        SemesterStore.Semester[] memory semestersToAdd = new SemesterStore.Semester[](2);
+        semestersToAdd[0] = SemesterStore.Semester("FALL", 2023, "https://www.example.com/fall2023");
+        semestersToAdd[1] = SemesterStore.Semester("SPRING", 2024, "https://www.example.com/spring2024");
+        bool success = semesterStoreToTest.addSemesters(semestersToAdd);
+        Assert.equal(success, true, "Semesters should have been added successfully");
+        // Check that semesters were added
+        Assert.equal(semesterStoreToTest.getSemester("FALL_2023"), "https://www.example.com/fall2023", "Fall 2023 semester should have been added correctly");
+        Assert.equal(semesterStoreToTest.getSemester("SPRING_2024"), "https://www.example.com/spring2024", "Spring 2024 semester should have been added correctly");
+    }
+
 }

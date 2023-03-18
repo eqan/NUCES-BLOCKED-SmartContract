@@ -88,21 +88,36 @@ contract CertificateStoreTest {
     }
 
     function checkRemoveCertificatess() public {
-        console.log("Running checkRemoveSemesters");
-        // Add semesters to remove
+        console.log("Running checkRemoveCertificates");
+        // Add Certificates to remove
         certificateStoreToTest.addCertificate("19F0260", "John Doe", "johndoe@email.com", "www.example.com");
         certificateStoreToTest.addCertificate("19F0261", "Jane Doe", "janedoe@email.com", "www.example2.com");
-        // Remove semesters
+        // Remove Certificates
         string[] memory certificateIds = new string[](2);
         certificateIds[0] = "19F0260";
         certificateIds[1] = "19F0261";
         bool success = certificateStoreToTest.removeCertificates(certificateIds);
         Assert.equal(success, true, "Certificates should have been removed successfully");
-        // Check that semesters were removed
+        // Check that Certificates were removed
         for (uint i = 0; i < certificateIds.length; i++) {
             string memory certificateId = certificateIds[i];
             (string memory id, string memory name, string memory email, string memory url) = certificateStoreToTest.getCertificate(certificateId);
             Assert.equal(id, "", "Certificate should have been removed correctly");
         }
+    }
+
+    function checkAddCertificates() public {
+        console.log("Running checkAddCertificates");
+        // Add certificates
+        CertificateStore.Certificate[] memory certificatesToAdd = new CertificateStore.Certificate[](2);
+        certificatesToAdd[0] = CertificateStore.Certificate("19F0260", "John Doe", "johndoe@email.com", "www.example.com");
+        certificatesToAdd[1] = CertificateStore.Certificate("19F0261", "John Doe", "johndoe@email.com", "www.example.com");
+        bool success = certificateStoreToTest.addCertificates(certificatesToAdd);
+        Assert.equal(success, true, "Certificates should have been added successfully");
+        // Check that Certificates were added
+        (string memory id, string memory name, string memory email, string memory url) = certificateStoreToTest.getCertificate("19F0260");
+        Assert.equal(url, "www.example.com", "Certificate of 19F0260 added Successfully");
+        (string memory id2, string memory name2, string memory email2, string memory url2) = certificateStoreToTest.getCertificate("19F0261");
+        Assert.equal(url2, "www.example.com", "Certificate of 19F0261 added Successfully");
     }
 }

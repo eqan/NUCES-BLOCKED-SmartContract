@@ -16,6 +16,13 @@ contract SemesterStore is Ownable {
     mapping(string => Semester) semesters;
     mapping(uint => string) semesterIds;
 
+    function addSemesters(Semester[] memory _semesters) public onlyOwner returns (bool) {
+        for (uint256 i = 0; i < _semesters.length; i++) {
+            addSemester(_semesters[i].semesterType, _semesters[i].year, _semesters[i].url);
+        }
+        return true;
+    }
+
     function addSemester(string memory semesterType, uint year, string memory url) public onlyOwner returns (bool)  {
         require(validateIDFormat(semesterType, year), "Format Invalid");
         string memory id = returnID(semesterType, year);
