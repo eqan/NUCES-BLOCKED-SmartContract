@@ -7,6 +7,6 @@ npx hardhat flatten
 
 Smart Contract Deployed Addresses:
 
-Certificate Store: 0xF2bB140fB23014EFAcbae6Ee1698aA2f8CdeB87F
+Certificate Store: 0xc26D8b7aa73461383FA179804DB0Cb2f0d911527
 
 Semester Store: 0x55e49d307e3886536A902214BEBA73faa2366dEE

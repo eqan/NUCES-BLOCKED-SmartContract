@@ -10,6 +10,9 @@ contract CertificateStore is Ownable {
         string name;
         string email;
         string url;
+        string cgpa;
+        uint batch;
+        string honours;
     }
     uint256 certificateIndex = 0;
     mapping(string => Certificate) certificates;
@@ -17,30 +20,30 @@ contract CertificateStore is Ownable {
 
     function addCertificates(Certificate[] memory _certificates) public onlyOwner returns (bool) {
         for (uint256 i = 0; i < _certificates.length; i++) {
-            addCertificate(_certificates[i].id, _certificates[i].name, _certificates[i].email, _certificates[i].url);
+            addCertificate(_certificates[i].id, _certificates[i].name, _certificates[i].email, _certificates[i].url, _certificates[i].cgpa, _certificates[i].batch, _certificates[i].honours);
         }
         return true;
     }
 
-    function addCertificate(string memory id, string memory name, string memory email, string memory url) public onlyOwner  returns (bool) {
+    function addCertificate(string memory id, string memory name, string memory email, string memory url, string memory cgpa, uint batch, string memory honours) public onlyOwner  returns (bool) {
         require(compare(certificates[id].id, ""), "Id already exists");
         certificateIds[certificateIndex] = id;
-        certificates[id] = Certificate(id, name, email, url);
+        certificates[id] = Certificate(id, name, email, url, cgpa, batch, honours);
         certificateIndex+=1;
         emit CertificateOperation("Certificate Added!");
         return true;
     }
 
-    function updateCertificate(string memory id, string memory name, string memory email, string memory url) public onlyOwner returns (bool) {
+    function updateCertificate(string memory id, string memory name, string memory email, string memory url, string memory cgpa, uint batch, string memory honours) public onlyOwner returns (bool) {
         require(compare(certificates[id].id, id), "Certificate does not exist");
-        certificates[id] = Certificate(id, name, email, url);
+        certificates[id] = Certificate(id, name, email, url, cgpa, batch, honours);
         emit CertificateOperation("Certificate Updated!");
         return true;
 
     }
 
-    function getCertificate(string memory id) public view returns (string memory, string memory, string memory, string memory) {
-        return (certificates[id].id, certificates[id].name, certificates[id].email, certificates[id].url);
+    function getCertificate(string memory id) public view returns (string memory, string memory, string memory, string memory,string memory, uint, string memory) {
+        return (certificates[id].id, certificates[id].name, certificates[id].email, certificates[id].url, certificates[id].cgpa, certificates[id].batch, certificates[id].honours);
     }
     
     function getCertificateCount() public view returns (uint256) {
@@ -75,6 +78,9 @@ contract CertificateStore is Ownable {
                 _certificates[index].name = certificates[id].name;
                 _certificates[index].email = certificates[id].email;
                 _certificates[index].url = certificates[id].url;
+                _certificates[index].cgpa = certificates[id].cgpa;
+                _certificates[index].batch = certificates[id].batch;
+                _certificates[index].honours = certificates[id].honours;
                 index++;
             }
         }

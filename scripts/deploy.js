@@ -5,12 +5,12 @@ const main = async () => {
   await transactionsContract.deployed();
 
   console.log("Certificate Contract Deployed address: ", transactionsContract.address);
-  transactionsFactory = await hre.ethers.getContractFactory("SemesterStore");
-  transactionsContract = await transactionsFactory.deploy();
+  // transactionsFactory = await hre.ethers.getContractFactory("SemesterStore");
+  // transactionsContract = await transactionsFactory.deploy();
 
-  await transactionsContract.deployed();
+  // await transactionsContract.deployed();
 
-  console.log("Semester Contract Deployed address: ", transactionsContract.address);
+  // console.log("Semester Contract Deployed address: ", transactionsContract.address);
 };
 
 const runMain = async () => {
