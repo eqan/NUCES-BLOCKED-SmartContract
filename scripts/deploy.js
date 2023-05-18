@@ -1,16 +1,23 @@
 const main = async () => {
-  let transactionsFactory = await hre.ethers.getContractFactory("CertificateStore");
-  let transactionsContract = await transactionsFactory.deploy();
+  // let transactionsFactory = await hre.ethers.getContractFactory("CertificateStore");
+  // let transactionsContract = await transactionsFactory.deploy();
 
-  await transactionsContract.deployed();
+  // await transactionsContract.deployed();
 
-  console.log("Certificate Contract Deployed address: ", transactionsContract.address);
+  // console.log("Certificate Contract Deployed address: ", transactionsContract.address);
   // transactionsFactory = await hre.ethers.getContractFactory("SemesterStore");
   // transactionsContract = await transactionsFactory.deploy();
 
   // await transactionsContract.deployed();
 
   // console.log("Semester Contract Deployed address: ", transactionsContract.address);
+  
+  let transactionsFactory = await hre.ethers.getContractFactory("VotingDAO");
+  let transactionsContract = await transactionsFactory.deploy("1");
+
+  await transactionsContract.deployed();
+
+  console.log("DAO Deployed address: ", transactionsContract.address);
 };
 
 const runMain = async () => {
