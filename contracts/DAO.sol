@@ -32,12 +32,12 @@ contract VotingDAO {
     }
 
     modifier checkProposalDoesntExists(string memory _proposalName) {
-        require(compare(proposals[_proposalName].proposalName, _proposalName), "This proposal already exist!");    
+        require(!compare(proposals[_proposalName].proposalName, _proposalName), "This proposal already exist!");    
         _;
     }
 
     modifier checkProposalExists(string memory _proposalName) {
-        require(!compare(proposals[_proposalName].proposalName, _proposalName), "This proposal doesnt exist!");    
+        require(compare(proposals[_proposalName].proposalName, _proposalName), "This proposal doesnt exist!");    
         _;
     }
 
@@ -47,7 +47,7 @@ contract VotingDAO {
     }
 
     function addVoter(address _voter) public onlyOwner {
-        voters[_voter] = true;
+        voters[_voter] = false;
     }
     
     function createProposal(string memory _proposalName, string memory _description) public checkProposalDoesntExists(_proposalName) onlyOwner {
@@ -63,7 +63,7 @@ contract VotingDAO {
     }
     
     function vote(string memory _proposalName, bool _vote) public checkProposalExists(_proposalName) checkVoterHasVoted() {
-        require(voters[msg.sender], "You are not authorized to vote.");
+        require(voters[msg.sender] == false, "You are not authorized to vote.");
 
         Proposal storage proposal = proposals[_proposalName];
         
