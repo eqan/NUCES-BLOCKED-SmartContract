@@ -5,17 +5,21 @@ contract VotingDAO {
     
     address public owner;          // Owner of the contract
     uint public requiredVotes;     // Required number of votes to pass a proposal
-    uint public proposalCount;     // Counter for proposals
-    
+    enum CurrentStatus {NOT_STARTED, IN_PROGRESS, COMPLETED}
+
     struct Proposal {
-        uint id;
+        string proposalName;
         string description;
         uint yesVotes;
         uint noVotes;
+        CurrentStatus status;
     }
     
-    mapping(uint => Proposal) public proposals;
+    mapping(string => Proposal) public proposals;
     mapping(address => bool) public voters;
+    mapping(uint => string) proposalIds;
+    uint256 proposalIndex = 0;
+
     
     constructor(uint _requiredVotes) {
         owner = msg.sender;
@@ -26,44 +30,90 @@ contract VotingDAO {
         require(msg.sender == owner, "Only the contract owner can perform this action.");
         _;
     }
-    
+
+    modifier checkProposalDoesntExists(string memory _proposalName) {
+        require(compare(proposals[_proposalName].proposalName, _proposalName), "This proposal already exist!");    
+        _;
+    }
+
+    modifier checkProposalExists(string memory _proposalName) {
+        require(!compare(proposals[_proposalName].proposalName, _proposalName), "This proposal doesnt exist!");    
+        _;
+    }
+
+    modifier checkVoterHasVoted() {
+        require(voters[msg.sender] == false, "Voter has already voted!");
+        _;
+    }
+
     function addVoter(address _voter) public onlyOwner {
         voters[_voter] = true;
     }
     
-    function createProposal(string memory _description) public onlyOwner {
-        proposalCount++;
-        proposals[proposalCount] = Proposal({
-            id: proposalCount,
+    function createProposal(string memory _proposalName, string memory _description) public checkProposalDoesntExists(_proposalName) onlyOwner {
+        proposals[_proposalName] = Proposal({
+            proposalName:_proposalName,
             description: _description,
             yesVotes: 0,
-            noVotes: 0
+            noVotes: 0,
+            status: CurrentStatus.IN_PROGRESS
         });
+        proposalIds[proposalIndex] = _proposalName;
+        proposalIndex++;
     }
     
-    function vote(uint _proposalId, bool _vote) public {
+    function vote(string memory _proposalName, bool _vote) public checkProposalExists(_proposalName) checkVoterHasVoted() {
         require(voters[msg.sender], "You are not authorized to vote.");
-        
-        Proposal storage proposal = proposals[_proposalId];
+
+        Proposal storage proposal = proposals[_proposalName];
         
         if(_vote) {
             proposal.yesVotes++;
         } else {
             proposal.noVotes++;
         }
+        voters[msg.sender] = true;
     }
     
-    function getProposalStatus(uint _proposalId) public view returns(bool) {
-        require(_proposalId <= proposalCount, "Invalid proposal ID.");
-        
-        Proposal memory proposal = proposals[_proposalId];
+    function getProposalStatus(string memory _proposalName) public checkProposalExists(_proposalName)  view returns(bool) {
+        Proposal memory proposal = proposals[_proposalName];
         
         if(proposal.yesVotes >= requiredVotes) {
+            proposal.status = CurrentStatus.COMPLETED;
             return true;
         } else if(proposal.noVotes >= requiredVotes) {
+            proposal.status = CurrentStatus.COMPLETED;
             return false;
         } else {
+            proposal.status = CurrentStatus.IN_PROGRESS;
             return false;
         }
+    }
+
+    function getProposalsWithCurrentStatuses(uint from, uint to) public view returns (Proposal[] memory) {
+        require(validatePagination(from, to), "Pagination coordinates exceeds limit!");
+        Proposal[] memory proposalData = new Proposal[](to - from + 1);
+        uint index = 0;
+        for (uint i = from; i <= to; i++) {
+            string memory id  = proposalIds[i];
+            if(!compare(proposals[id].proposalName, "")){
+                proposalData[index].description = proposals[id].description;
+                proposalData[index].yesVotes = proposals[id].yesVotes;
+                proposalData[index].noVotes = proposals[id].noVotes;
+                proposalData[index].status = proposals[id].status;
+            }
+        }
+        return proposalData;
+    }
+
+
+    function compare(string memory str1, string memory str2) private pure returns (bool) {
+        return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
+    }
+
+    function validatePagination(uint from, uint to) private view returns(bool){
+        if(from >=0  && to <= proposalIndex)
+            return true;
+        return false;
     }
 }
