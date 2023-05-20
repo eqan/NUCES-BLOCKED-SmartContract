@@ -90,6 +90,10 @@ contract VotingDAO {
         }
     }
 
+    function getNumberOfProposals() public view returns(uint) {
+        return proposalIndex;
+    }
+
     function getProposalsWithCurrentStatuses(uint from, uint to) public view returns (Proposal[] memory) {
         require(validatePagination(from, to), "Pagination coordinates exceeds limit!");
         Proposal[] memory proposalData = new Proposal[](to - from + 1);
@@ -97,6 +101,7 @@ contract VotingDAO {
         for (uint i = from; i <= to; i++) {
             string memory id  = proposalIds[i];
             if(!compare(proposals[id].proposalName, "")){
+                proposalData[index].proposalName = proposals[id].proposalName;
                 proposalData[index].description = proposals[id].description;
                 proposalData[index].yesVotes = proposals[id].yesVotes;
                 proposalData[index].noVotes = proposals[id].noVotes;

@@ -44,6 +44,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getNumberOfProposals",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "string",
