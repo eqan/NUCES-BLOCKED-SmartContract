@@ -74,15 +74,26 @@ contract VotingDAO {
         }
         voters[msg.sender] = true;
     }
+
+    function updateProposalStatuses() public returns(bool){
+       for (uint i = 0; i <= proposalIndex; i++) {
+            string memory id  = proposalIds[i];
+            if(!compare(proposals[id].proposalName, "")){
+                if(proposals[id].yesVotes >= requiredVotes || proposals[id].noVotes >= requiredVotes)
+                {
+                    proposals[id].status = CurrentStatus.COMPLETED;
+                }
+            }
+        } 
+        return true;
+    }
     
     function getProposalStatus(string memory _proposalName) public checkProposalExists(_proposalName)  view returns(bool) {
         Proposal memory proposal = proposals[_proposalName];
         
         if(proposal.yesVotes >= requiredVotes) {
-            proposal.status = CurrentStatus.COMPLETED;
             return true;
         } else if(proposal.noVotes >= requiredVotes) {
-            proposal.status = CurrentStatus.COMPLETED;
             return false;
         } else {
             proposal.status = CurrentStatus.IN_PROGRESS;
