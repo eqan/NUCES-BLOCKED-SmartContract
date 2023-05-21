@@ -41,12 +41,12 @@ contract VotingDAO {
         _;
     }
 
-    modifier checkVoterHasVoted() {
-        require(voters[msg.sender] == false, "Voter has already voted!");
+    modifier checkForVoter(address _voter) {
+        require(voters[_voter] == false, "Voter has already voted or isn't authorized!");
         _;
     }
 
-    function addVoter(address _voter) public onlyOwner {
+    function addVoter(address _voter) public checkForVoter(_voter) onlyOwner {
         voters[_voter] = false;
     }
     
@@ -62,9 +62,7 @@ contract VotingDAO {
         proposalIndex++;
     }
     
-    function vote(string memory _proposalName, bool _vote) public checkProposalExists(_proposalName) checkVoterHasVoted() {
-        require(voters[msg.sender] == false, "You are not authorized to vote.");
-
+    function vote(string memory _proposalName, bool _vote) public checkProposalExists(_proposalName) checkForVoter(msg.sender) {
         Proposal storage proposal = proposals[_proposalName];
         
         if(_vote) {
@@ -73,19 +71,6 @@ contract VotingDAO {
             proposal.noVotes++;
         }
         voters[msg.sender] = true;
-    }
-
-    function updateProposalStatuses() public returns(bool){
-       for (uint i = 0; i <= proposalIndex; i++) {
-            string memory id  = proposalIds[i];
-            if(!compare(proposals[id].proposalName, "")){
-                if(proposals[id].yesVotes >= requiredVotes || proposals[id].noVotes >= requiredVotes)
-                {
-                    proposals[id].status = CurrentStatus.COMPLETED;
-                }
-            }
-        } 
-        return true;
     }
     
     function getProposalStatus(string memory _proposalName) public checkProposalExists(_proposalName)  view returns(bool) {
@@ -105,6 +90,20 @@ contract VotingDAO {
         return proposalIndex;
     }
 
+    function updateStatuses() public returns (bool) {
+        for (uint i = 0; i <= proposalIndex; i++) {
+            string memory id  = proposalIds[i];
+            if(!compare(proposals[id].proposalName, ""))
+            {
+                if(proposals[id].yesVotes >= requiredVotes || proposals[id].noVotes >= requiredVotes)
+                {
+                    proposals[id].status = CurrentStatus.COMPLETED;
+                }
+            }
+        }
+        return true;
+    }
+
     function getProposalsWithCurrentStatuses(uint from, uint to) public view returns (Proposal[] memory) {
         require(validatePagination(from, to), "Pagination coordinates exceeds limit!");
         Proposal[] memory proposalData = new Proposal[](to - from + 1);
@@ -118,6 +117,7 @@ contract VotingDAO {
                 proposalData[index].noVotes = proposals[id].noVotes;
                 proposalData[index].status = proposals[id].status;
             }
+            index++;
         }
         return proposalData;
     }
